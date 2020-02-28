@@ -71,8 +71,11 @@ public class Offer {
         }
     }
 
-    /*
-    根据前序遍历和中序遍历得出后序遍历；
+    /**
+     * 根据前序遍历和中序遍历得出后序遍历；
+     * @param pre
+     * @param in
+     * @return
      */
     private int[] getPosArray(int[] pre, int[] in) {
         if (pre == null || in == null) {
@@ -83,7 +86,7 @@ public class Offer {
         for (int i = 0; i < pre.length; i++) {
             map.put(in[i], i);
         }
-        setPos(pre, 0, pre.length - 1, in, 0, in.length - 1, res, 0, map);
+        setPos(pre, 0, pre.length - 1, in, 0, in.length - 1, res, res.length - 1, map);
         return res;
     }
 
@@ -645,8 +648,73 @@ public class Offer {
         return left && right;
     }
 
-}
+    /**
+     * 求两个字符串的最长公共子串长度
+     * @param str1
+     * @param str2
+     * @return
+     */
+    private int longestCommonSubstring(String str1, String str2) {
+        int len1 = str1.length();
+        int len2 = str2.length();
+        int result = 0;     //记录最长公共子串长度
+        int c[][] = new int[len1 + 1][len2 + 1];
+        for (int i = 0; i <= len1; i++) {
+            for (int j = 0; j <= len2; j++) {
+                if (i == 0 || j == 0) {
+                    c[i][j] = 0;
+                } else if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    c[i][j] = c[i - 1][j - 1] + 1;
+                    result = Math.max(c[i][j], result);
+                } else {
+                    c[i][j] = 0;
+                }
+            }
+        }
+        return result;
+    }
 
+    /*
+    重建二叉树
+    输入某二叉树的前序遍历和中序遍历的结果，请重建该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+     */
+    HashMap<Integer, Integer> dic = new HashMap<>();
+    int[] po;
+    private TreeNode reConstructBinTree(int[] preOrder, int[] inOrder) {
+        po = preOrder;
+        for(int i = 0; i < inOrder.length; i++)
+            dic.put(inOrder[i], i);
+        return recur(0, 0, inOrder.length - 1);
+    }
+
+    TreeNode recur(int pre_root, int in_left, int in_right) {
+        if (in_left > in_right) return null;
+        TreeNode root = new TreeNode(po[pre_root]);
+        int i = dic.get(po[pre_root]);
+        root.left = recur(pre_root + 1, in_left, i - 1);
+        root.right = recur(pre_root + i - in_left + 1, i + 1, in_right);
+        return root;
+    }
+
+
+    /**
+     * 求斐波那契数列
+     * @param n
+     * @return
+     */
+    private int fib(int n) {
+        if (n == 0 || n == 1) {
+            return n;
+        }
+        int[] dp = new int[n];
+        dp[0] = 0;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = (dp[i - 1] + dp[i - 2]) % 1000000007;
+        }
+        return dp[n - 1];
+    }
+}
 
 
 

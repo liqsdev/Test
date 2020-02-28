@@ -5,7 +5,6 @@ import java.util.*;
 public class Main {
 
 
-
     private int countBinarySubstrings(String s) {
         if (s == null || s.length() == 1)
             return 0;
@@ -1644,7 +1643,7 @@ public class Main {
             mid = (start + end) / 2;
             if (nums[mid] == target) {
                 return mid;
-            } else if(target < nums[mid]) {
+            } else if (target < nums[mid]) {
                 end = mid - 1;
             } else {
                 start = mid + 1;
@@ -1716,32 +1715,552 @@ public class Main {
     }
 
 
+    private int maxLength(String s) {
+        if (s.length() == 0)
+            return 0;
+        int max = 0;
+        Set<Character> set = new HashSet<>();
+        int i = 0;
+        int j = 0;
+        while (i < s.length() && j < s.length()) {
+            if (!set.contains(s.charAt(j))) {
+                set.add(s.charAt(j));
+                j++;
+                max = Math.max(max, j - i);
+            } else {
+                set.remove(s.charAt(i));
+                i++;
+            }
+        }
+        return max;
+    }
+
+
+    private int countTeam(int[][] nums) {
+        if (nums == null || nums.length == 0)
+            return 0;
+        boolean[][] flag = new boolean[nums.length][nums[0].length];
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j < nums[0].length; j++) {
+                flag[i][j] = false;
+            }
+        }
+        int res = 0;
+        Queue<Point> queue = new LinkedList<>();
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j < nums[0].length; j++) {
+                if (nums[i][j] == 1 && !flag[i][j]) {
+                    queue.offer(new Point(i, j));
+                    Point p;
+                    while (!queue.isEmpty()) {
+                        p = queue.poll();
+                        flag[p.x][p.y] = true;
+                        if (p.x - 1 >= 0 && nums[p.x - 1][p.y] == 1 && !flag[p.x - 1][p.y]) {
+                            queue.offer(new Point(p.x - 1, p.y));
+                        }
+                        if (p.x + 1 < nums.length && nums[p.x + 1][p.y] == 1 && !flag[p.x + 1][p.y]) {
+                            queue.offer(new Point(p.x + 1, p.y));
+                        }
+                        if (p.y - 1 >= 0 && nums[p.x][p.y - 1] == 1 && !flag[p.x][p.y - 1]) {
+                            queue.offer(new Point(p.x, p.y - 1));
+                        }
+                        if (p.y + 1 < nums[0].length && nums[p.x][p.y + 1] == 1 && !flag[p.x][p.y + 1]) {
+                            queue.offer(new Point(p.x, p.y + 1));
+                        }
+                    }
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+
+    private int legalUTF8(int[] nums) {
+        int n = nums.length;
+        int res = 0;
+        if (n == 1) {
+            if (nums[0] >= 128) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            switch (n) {
+                case 2: {
+                    if (nums[0] >= 192 && nums[0] < 224 && nums[1] >= 128 && nums[1] <= 255) {
+                        res = 1;
+                    } else {
+                        res = 0;
+                    }
+                }
+                break;
+                case 3: {
+                    if (nums[0] >= 224 && nums[0] <= 240 && nums[1] >= 128 && nums[1] <= 255
+                            && nums[2] >= 128 && nums[2] <= 255) {
+                        res = 1;
+                    } else {
+                        res = 0;
+                    }
+
+                }
+                break;
+                case 4: {
+                    if (nums[0] >= 240 && nums[0] < 248 && nums[1] >= 128 && nums[1] <= 255
+                            && nums[2] >= 128 && nums[2] <= 255 && nums[3] >= 128 && nums[3] <= 255) {
+                        res = 1;
+                    } else {
+                        res = 0;
+                    }
+
+                }
+                break;
+            }
+        }
+        return res;
+    }
+
+    private int countUnaccept(int[][] nums) {
+        int res = 0;
+
+        boolean isCount = false;
+        for (int i = 0; i < nums.length; i++) {
+            isCount = false;
+            for (int j = 0; j < nums.length; j++) {
+                if (nums[i][0] < nums[j][0] && nums[i][1] < nums[j][1] && nums[i][2] < nums[j][2]) {
+                    isCount = true;
+                    break;
+                }
+            }
+            if (isCount) {
+                res++;
+            }
+        }
+        return res;
+    }
+
+
+    private int[] findDisappearedNum(int[] nums) {
+        int i = 0;
+        while (i < nums.length) {
+            while (nums[i] != i + 1 && nums[i] != nums[nums[i] - 1]) {
+                swap(nums, i, nums[i] - 1);
+            }
+            i++;
+        }
+
+        List<Integer> list = new ArrayList<>();
+        for (int k = 0; k < nums.length; k++) {
+            if (nums[k] != k + 1) {
+                list.add(k + 1);
+            }
+        }
+        int[] res = new int[list.size()];
+        for (int j = 0; j < list.size(); j++) {
+            res[j] = list.get(j);
+        }
+        return res;
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+
+
+    private int isLuckyId(String s) {
+        int[] nums1 = new int[3];
+        int[] nums2 = new int[3];
+
+        int sum1 = 0;
+        int sum2 = 0;
+        for (int i = 0; i < nums1.length; i++) {
+            nums1[i] = s.charAt(i) - '0';
+            sum1 += nums1[i];
+        }
+        for (int i = 3; i < 6; i++) {
+            nums2[i - 3] = s.charAt(i) - '0';
+            sum2 += nums2[i - 3];
+        }
+
+        if (sum1 == sum2)
+            return 0;
+
+        int dis = Math.abs(sum1 - sum2);
+        int flag = sum1 < sum2 ? 1 : 2;
+
+        if (dis / 10 == 0) {
+            if (flag == 1) {
+                for (int num : nums1) {
+                    if (num < (10 - dis)) {
+                        return 1;
+                    }
+                }
+                return 2;
+            } else {
+                for (int num : nums2) {
+                    if (num < (10 - dis)) {
+                        return 1;
+                    }
+                }
+                return 2;
+            }
+        } else if (dis / 10 == 1) {
+            if (flag == 1) {
+                if (nums1[0] + nums1[1] <= 18 - dis || nums1[0] + nums1[2] <= 18 - dis ||
+                        nums1[2] + nums1[1] <= 18 - dis) {
+                    return 2;
+                } else {
+                    return 3;
+                }
+            } else {
+                if (nums2[0] + nums2[1] <= 18 - dis || nums2[0] + nums2[2] <= 18 - dis ||
+                        nums2[2] + nums2[1] <= 18 - dis) {
+                    return 2;
+                } else {
+                    return 3;
+                }
+            }
+        } else {
+            return 3;
+        }
+    }
+
+    private ListNode reverseListEveryK(ListNode head, int k) {
+        ListNode p = new ListNode(0);
+        ListNode pre = p;
+        ListNode cur = pre;
+        p.next = head;
+        int num = 0;
+        cur = cur.next;
+        while (cur != null) {
+            num++;
+            cur = cur.next;
+        }
+        ListNode node;
+        while (num >= k) {
+            cur = pre.next;
+            for (int i = 1; i < k; i++) {
+                node = cur.next;
+                cur.next = node.next;
+                node.next = pre.next;
+                pre.next = node;
+            }
+            pre = cur;
+            num = num - k;
+        }
+
+        return p.next;
+    }
+
+
+    private int countZero(int n) {
+        int res = 0;
+        int count;
+        for (int i = 5; i <= n; i++) {
+            count = 0;
+            int temp = i;
+            while (temp % 5 == 0) {
+                count++;
+                temp = temp / 5;
+            }
+            res += count * (n - i + 1);
+        }
+        return res;
+    }
+
+    private int isSatisfied(int[][] nums, int n) {
+        Queue<Integer> queue = new ArrayDeque<>();
+        queue.offer(nums[0][0]);
+        boolean[] flag = new boolean[n];
+        for (boolean f : flag) {
+            f = false;
+        }
+        while (!queue.isEmpty()) {
+            int k = queue.poll();
+            flag[k - 1] = true;
+            for (int[] num : nums) {
+                if (num[0] == k) {
+                    if (queue.contains(num[1])) {
+                        return 0;
+                    }
+                    if (!flag[num[1] - 1]) {
+                        queue.offer(num[1]);
+                    }
+                }
+            }
+
+        }
+        return 1;
+    }
+
+    private String GetResult(int N) {
+        int start = 1;
+        int end = 0;
+        int i = 1;
+        while (end < N) {
+            start = i + start;
+            end = start + i;
+            i++;
+        }
+
+        int count = N - start;
+        int k = i - count;
+        int m = 1 + count;
+
+        if ((i & 1) == 0) {
+            return m + "/" + k;
+        } else {
+            return k + "/" + m;
+        }
+    }
+
+    public int[][] setZeroes(int[][] matrix) {
+        boolean rowZero = false;
+        boolean columnZero = false;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 0) {
+                    if (i == 0 || j == 0) {
+                        if (i == 0)
+                            rowZero = true;
+                        if (j == 0)
+                            columnZero = true;
+                    } else {
+                        matrix[i][0] = 0;
+                        matrix[0][j] = 0;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < matrix.length; i++) {
+            if (matrix[i][0] == 0) {
+                for (int j = 1; j < matrix[0].length; j++) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        for (int j = 0; j < matrix[0].length; j++) {
+            if (matrix[0][j] == 0) {
+                for (int i = 1; i < matrix.length; i++) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if (rowZero) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                matrix[0][j] = 0;
+            }
+        }
+        if (columnZero) {
+            for (int i = 0; i < matrix.length; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+        return matrix;
+    }
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        if (head == null)
+            return null;
+        ListNode p1 = head;
+        int i = 1;
+        while (i < n) {
+            p1 = p1.next;
+            i++;
+        }
+        ListNode p2 = head;
+        ListNode pre = null;
+        while (p1.next != null) {
+            p1 = p1.next;
+            p2 = p2.next;
+            if (pre == null) {
+                pre = head;
+            } else {
+                pre = pre.next;
+            }
+        }
+        if (pre == null) {
+            return head.next;
+        } else {
+            pre.next = p2.next;
+            p2.next = null;
+            return head;
+        }
+    }
+
+    private double distance(int n, int m) {
+        double res = n;
+        double dis = (double) n / 2;
+        int count = 1;
+        while (count < m) {
+            res += dis * 2;
+            dis /= 2;
+            count++;
+        }
+        return res;
+    }
+
+    private void bubbleSort(int[] nums) {
+        if (nums == null || nums.length == 0)
+            return;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (nums[j] > nums[j + 1]) {
+                    int temp = nums[j];
+                    nums[j] = nums[j + 1];
+                    nums[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+
+    private String[] matchArray(String[] str, String pat) {
+        String[] res = new String[str.length];
+        int index = res.length - 1;
+        int count = 0;
+        for (int i = 0; i < res.length; i++) {
+            res[i] = null;
+        }
+        for (String s : str) {
+            if (stringMatch(s, pat)) {
+                res[index--] = s;
+                count++;
+            }
+        }
+        String[] ss = new String[count];
+        index = res.length - 1;
+        for (int i = ss.length - 1; i >= 0; i--) {
+            ss[i] = res[index--];
+        }
+        return ss;
+    }
+    private boolean stringMatch(String source, String pattern) {
+        int i = 0;
+        int j = 0;
+        while (i < source.length() && j < pattern.length()) {
+            if (source.charAt(i) == pattern.charAt(j)) {
+                i++;
+                j++;
+            } else {
+                i = i - (j - 1);
+                j = 0;
+            }
+        }
+        return j == pattern.length();
+    }
+
+    private int func(int[][] nums) {
+        Arrays.sort(nums, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                if (o1[0] > o2[0]) {
+                    return 1;
+                } else if (o1[0] < o2[0]){
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        int[] dp = new int[nums.length];
+        for (int i = 0; i < dp.length; i++) {
+            dp[i] = 1;
+        }
+        int res = 0;
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i][0] >= nums[j][0] && nums[i][1] >= nums[j][1]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+            }
+            res = Math.max(res, dp[i]);
+        }
+        return res;
+    }
+
+    private int count = 0;
+    private int palinCount(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            explore(s, i, i);
+            explore(s, i, i + 1);
+        }
+        return count;
+    }
+
+    private void explore(String s, int left, int right) {
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            count++;
+            left--;
+            right++;
+        }
+    }
+
+    private int minBox(int x) {
+        int[] dp = new int[x + 1];
+        for (int i = 0; i < dp.length; i++) {
+            dp[i] = Integer.MAX_VALUE;
+        }
+        for (int i = 1; i < dp.length; i++) {
+            if (i == 3 || i == 5 || i == 7) {
+                dp[i] = 1;
+            } else {
+                int m = Integer.MAX_VALUE;
+                int n = Integer.MAX_VALUE;
+                int p = Integer.MAX_VALUE;
+                if (i - 3 > 0) {
+                    m = dp[i - 3];
+                }
+                if (i - 5 > 0) {
+                    n = dp[i - 5];
+                }
+                if (i - 7 > 0) {
+                    p = dp[i - 7];
+                }
+                int min = Math.min(m, Math.min(n, p));
+                if (min != Integer.MAX_VALUE) {
+                    dp[i] = min + 1;
+                }
+            }
+        }
+        return dp[x] == Integer.MAX_VALUE ? -1 : dp[x];
+    }
+
+    private int moveSteps(int x, int y) {
+        int s = x + y;
+        int top = 1;
+        for (int i = s; i >= y + 1; i--) {
+            top *= i;
+        }
+        int bot = 1;
+        for (int i = x; i >= 1; i--) {
+            bot *= i;
+        }
+        return top / bot;
+    }
+
     public static void main(String[] args) {
 
         Main main = new Main();
         Scanner s = new Scanner(System.in);
-        int n = s.nextInt();
-        int[][] nums = new int[n][3];
-        s.nextLine();
-        int target = s.nextInt();
-        s.nextLine();
-        for (int i = 0; i < n; i++) {
-            nums[i][0] = s.nextInt();
-            nums[i][1] = s.nextInt();
-            nums[i][2] = s.nextInt();
-            s.nextLine();
-        }
-        List list = main.getRecords(nums, target);
-        if (list.size() == 0) {
-            System.out.println("null");
-        } else {
-            for (Object aList : list) {
-                System.out.println(aList);
-            }
-        }
+
+        int x = s.nextInt();
+        int y = s.nextInt();
+        System.out.println(main.moveSteps(x, y));
 
     }
 
+}
+
+class Point {
+    int x;
+    int y;
+
+    Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 }
 
 
